@@ -11,7 +11,7 @@ class Process:
         self.burst_time = burst_time
     #for printing purpose
     def __repr__(self):
-        return ('[id %d : arrival_time %d,  burst_time %d]'%(self.id, self.arrive_time, self.burst_time))
+        return ('[id %d : arrive_time %d,  burst_time %d]'%(self.id, self.arrive_time, self.burst_time))
 
 def rr(process_list, quantum):
     current_time = 0
