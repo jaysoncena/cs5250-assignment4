@@ -20,10 +20,108 @@ class Process:
     def last_process_time(self):
         return max([self.arrive_time, self.last_preempt_time])
 
-
 class SRTFList(MutableSequence):
-    def __init__(self, data=None):
+    def __init__(self, alpha, initial_guess, data=None):
         super(SRTFList, self).__init__()
+
+        self._pid_previous_actual = {}
+        self._initial_guess = initial_guess
+        self._alpha = float(alpha)
+
+        if data is None:
+            self._list = list()
+        else:
+            self._list = list(data)
+
+        
+        self._sorted_by_arrive_time()
+    def __repr__(self):
+        ret = ["{0} {1}".format(type(x), x) for x in self._list]
+        return "\n".join(ret)
+    def __len__(self):
+        return len(self._list)
+    def __getitem__(self, ii):
+        return self._list[ii]
+    def __delitem__(self, ii):
+        del self._list[ii]
+    def __setitem__(self, ii, val):
+        self._list[ii] = val
+    def __str__(self):
+        return self.__repr__()
+
+    def add(self, val):
+        if not isinstance(val, Process):
+            raise ValueError("<{0} {1}> is not an instance of {2}".format(val.__class__.__name__, val, Process.__class__.__name__))
+
+        self._list.insert(len(self._list), val)
+        self._sorted_by_arrive_time()
+
+    def _sorted_by_arrive_time(self):
+        self._list = sorted(self._list, key=lambda x: x.arrive_time)
+
+    def _previous_actual_time(self, pid):
+
+
+    # TODO
+    def set_forceast_burst_time(self, pid, value=None):
+        if pid in 
+
+    def get_by_srtf(self, current_time, pop=False):
+        if len(self._list) < 1:
+            return None
+        elif len(self._list)  == 1:
+            # pop
+            p = self._list[0]
+            if pop:
+                del self._list[0]
+            return p
+        # else
+        filtered_list = [x for x in self._list if x.last_process_time() <= current_time]
+        if not filtered_list:
+            self._sorted_by_process_time()
+            # pop
+            p = self._list[0]
+            if pop:
+                del self._list[0]
+            return p
+
+        # least burst_time
+        filtered_list = sorted(filtered_list, key=lambda x: x.burst_time)
+        # pop
+        p_num = self._list.index(filtered_list[0])
+        p = self._list[p_num]
+        if pop:
+            del self._list[p_num]
+        return p
+
+    def pop_by_srtf(self, current_time):
+        if len(self._list) < 1:
+            return None
+        elif len(self._list)  == 1:
+            # pop
+            p = self._list[0]
+            del self._list[0]
+            return p
+        # else
+        filtered_list = [x for x in self._list if x.last_process_time() <= current_time]
+        if not filtered_list:
+            self._sorted_by_process_time()
+            # pop
+            p = self._list[0]
+            del self._list[0]
+            return p
+
+        # least burst_time
+        filtered_list = sorted(filtered_list, key=lambda x: x.burst_time)
+        # pop
+        p_num = self._list.index(filtered_list[0])
+        p = self._list[p_num]
+        del self._list[p_num]
+        return p
+
+class SJFList(MutableSequence):
+    def __init__(self, data=None):
+        super(SJFList, self).__init__()
         if data is None:
             self._list = list()
         else:
@@ -43,10 +141,6 @@ class SRTFList(MutableSequence):
         self._list[ii] = val
     def __str__(self):
         return self.__repr__()
-    def insert(self, val):
-        pass
-    def append(self, val):
-        pass
 
     def add(self, val):
         if not isinstance(val, Process):
@@ -76,14 +170,6 @@ class SRTFList(MutableSequence):
         """ gets the process with SRTF """
         pass
 
-    # def pop_left_by_arrive_time(self):
-    #     if self._list:
-    #         self._sorted_by_arrive_time()
-    #         p = self._list[0]
-    #         del self._list[0]
-    #         return p
-    #     else:
-    #         return None
     def get_by_srtf(self, current_time, pop=False):
         if len(self._list) < 1:
             return None
