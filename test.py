@@ -39,6 +39,7 @@ test_data4 = [
 
 # simulate out-of-order burst_time
 test_data5 = [
+    # t, p, b
     asg4.Process(0, 0, 9),
     asg4.Process(1, 1, 2),
     asg4.Process(2, 2, 1),
@@ -47,8 +48,12 @@ test_data5 = [
 
 
 def srtf_test():
+    previous_pid = -1
+
     for line in asg4.srtf(test_data5):
-        print(line)
+        # if previous_pid != line[1].id:
+            print(line)
+            # previous_pid = line[1].id
     # asg4.srtf(test_data5)
     # for line in
 
