@@ -56,6 +56,31 @@ test_data6 = [
     Process(5, 3, 2)
 ]
 
+# from the assignment
+test_data7 = [
+    # id, t, b
+    Process(0, 0, 9),
+    Process(1, 1, 8),
+    Process(2, 2, 2),
+    Process(3, 5, 2),
+    Process(3, 30, 5),
+    # Process(4, 30, 2),#
+    # Process(5, 30, 3),#
+    Process(1, 31, 2),
+    Process(2, 32, 6),
+    Process(0, 38, 8),
+    Process(2, 60, 7),
+    Process(0, 62, 2),
+    Process(1, 65, 3),
+    Process(3, 66, 8),
+    # Process(4, 66, 2),#
+    # Process(5, 66, 3),#
+    Process(1, 90, 10),
+    Process(0, 95, 10),
+    Process(2, 98, 9),
+    Process(3, 99, 8),
+]
+
 
 def srtf_test():
     previous_pid = -1

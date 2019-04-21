@@ -1,5 +1,5 @@
 import process_list
-from test import test_data1, test_data2, test_data3, test_data4, test_data5, test_data6
+from test import test_data1, test_data2, test_data3, test_data4, test_data5, test_data6, test_data7
 
 class SJFProcess(process_list.Process):
     def __init__(self, process, initial_time):
@@ -8,7 +8,8 @@ class SJFProcess(process_list.Process):
         if not isinstance(process, process_list.Process):
             raise TypeError("{} is not Process class".format(process))
 
-        self.predicted_time = initial_time
+        self.initial_time = initial_time
+        self.predicted_time = -1
         self.actual_time = 0
         
         self.convert_from_process(process)
@@ -23,11 +24,6 @@ class SJFProcess(process_list.Process):
         self.total_waiting_time = process.total_waiting_time
         self.last_preempt_time = process.last_preempt_time
 
-    def predict_next_burst(self, alpha):
-        predicted_time = (alpha * self.actual_time) + ((1 - alpha) * self.predicted_time)
-        # print("{}: next={}".format(self.id, next_predicted_time))
-        return predicted_time
-
 
         
 
@@ -37,11 +33,9 @@ class SJFList(process_list.ProcessList):
         
         self._alpha = alpha
         self._list = [SJFProcess(x, initial_guess) for x in self._list]
-        self._process_performance = {}
+        self._process_history = {}
         for proc in self._list:
-            self._process_performance[proc.id] = {"actual": 0, "predicted": initial_guess}
-    def _sorted_by_next_predicted_time(self):
-        self._list = sorted(self._list, key=lambda k, alpha=self._alpha: k.predict_next_burst(alpha))
+            self._process_history[proc.id] = {"actual": -1, "predicted": initial_guess}
 
     def pop_earliest(self):
         """
@@ -66,23 +60,70 @@ class SJFList(process_list.ProcessList):
         # 2. get the earliest process
         earliest_procs = [process_list[0]]
         # del process_list[0]
+        # 4. get the arrive_time of the earliest process
+        # 5. look for the same arrive_time and put to earliest_procs[]
         earliest_procs += [x for x in process_list
             if x.arrive_time == earliest_procs[0].arrive_time
             and x.id != earliest_procs[0].id]
 
-        return earliest_procs
+        if len(earliest_procs) < 1:
+            # this looks like a dead code block to me
+            return None
+        elif len(earliest_procs) == 1:
+            # if earliest_procs is just 1, there's no reason to sort this
+            p = earliest_procs[0]
+            p_index = self._list.index(p)
+            self._list.index
+            del self._list[p_index]
+            return p
+        # else
+
+        # 6. sort earliest_procs by predicted time
+        earliest_procs = sorted(earliest_procs, key=lambda p: self.proc_predict_next_time(p))
+        # 7. get earliest_procs[0]
+        p = earliest_procs[0]
+        p_index = self._list.index(p)
+        # 8. delete earliest_procs[0] from self._list
+        del self._list[p_index]
         
+        # 9. return earliest_procs[0]
+        return p
+
+    def proc_predict_next_time(self, proc):
+        p = self._process_history[proc.id]
+        if p["actual"] == -1:
+            return p["predicted"]
+        return (self._alpha * p["actual"]) + ((1 - self._alpha) * p["predicted"])
+
+    def iter(self):
+        current_time = 0
+        while self._list:
+            p = self.pop_earliest()
+
+            if current_time < p.arrive_time:
+                current_time = p.arrive_time
+
+            yield (current_time, p.id, self.proc_predict_next_time(p), p)
+            # update actual and predicted
+            self._process_history[p.id]["predicted"] = self.proc_predict_next_time(p)
+            self._process_history[p.id]["actual"] = p.burst_time
+
+            current_time += p.burst_time
         
 
-
-
+# this main() is for testing only
 def main():
-    sjf = SJFList(data=test_data6)
-    print(sjf)
+    sjf = SJFList(data=test_data7)
     
-    x = sjf.pop_earliest()
-    print(x[0])
+    total_waiting_time = 0
+    schedule_count = 0
+    for p in sjf.iter():
+        print((p[0], p[1]))
 
+        schedule_count += 1
+        total_waiting_time += (p[0] - p[3].arrive_time)
+        # print(p)
+    print("Average waiting time: {}".format(total_waiting_time / schedule_count))
 
 
 if __name__ == "__main__":

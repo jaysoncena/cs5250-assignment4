@@ -18,6 +18,16 @@ class Process:
             self.arrive_time,
             self.burst_time,
             self.last_preempt_time))
+
+    def __repr__(self):
+        return ("<{} at {}: id={}, arrive_time={}, burst_time={}, last_preempt_time={}>".format(
+            self.__class__.__name__,
+            hex(id(self)),
+            self.id,
+            self.arrive_time,
+            self.burst_time,
+            self.last_preempt_time))
+
     def last_process_time(self):
         return max([self.arrive_time, self.last_preempt_time])
 
