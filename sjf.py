@@ -25,10 +25,9 @@ class SJFProcess(process_list.Process):
         self.last_preempt_time = process.last_preempt_time
 
 
-        
-
 class SJFList(process_list.ProcessList):
     def __init__(self, alpha=0.5, initial_guess=5, data=None):
+        # assigns data to self._list
         super(SJFList, self).__init__(data=data)
         
         self._alpha = alpha
@@ -103,17 +102,38 @@ class SJFList(process_list.ProcessList):
             if current_time < p.arrive_time:
                 current_time = p.arrive_time
 
+            p.update_waiting_time(current_time)
+
             yield (current_time, p.id, self.proc_predict_next_time(p), p)
             # update actual and predicted
             self._process_history[p.id]["predicted"] = self.proc_predict_next_time(p)
             self._process_history[p.id]["actual"] = p.burst_time
 
             current_time += p.burst_time
+
+            self._total_waiting_time += p.total_waiting_time
+            self._total_queued_process += 1
         
 
 # this main() is for testing only
 def main():
-    sjf = SJFList(data=test_data7)
+    # for i in range(1,100):
+    #     alpha = i / float(100)
+    #     sjf = SJFList(data=test_data7, alpha=alpha)
+        
+    #     total_waiting_time = 0
+    #     schedule_count = 0
+    #     for p in sjf.iter():
+    #         print((p[0], p[1]))
+
+    #         schedule_count += 1
+    #         total_waiting_time += (p[0] - p[3].arrive_time)
+    #         # print(p)
+    #     print("Average waiting time for alpha={}: {}".format(alpha, total_waiting_time / schedule_count))
+
+        # for i in range(1,100):
+    alpha = 0.5
+    sjf = SJFList(data=test_data7, alpha=alpha)
     
     total_waiting_time = 0
     schedule_count = 0
@@ -123,7 +143,8 @@ def main():
         schedule_count += 1
         total_waiting_time += (p[0] - p[3].arrive_time)
         # print(p)
-    print("Average waiting time: {}".format(total_waiting_time / schedule_count))
+    print("Average waiting time for alpha={}: {}".format(alpha, total_waiting_time / schedule_count))
+    print(sjf.waiting_time())
 
 
 if __name__ == "__main__":
