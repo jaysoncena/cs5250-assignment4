@@ -31,6 +31,9 @@ class Process:
     def last_process_time(self):
         return max([self.arrive_time, self.last_preempt_time])
 
+    def update_waiting_time(self, current_time):
+        self.total_waiting_time += current_time - self.last_process_time()
+
 class ProcessList(MutableSequence):
     def __init__(self, data=None):
         super(ProcessList, self).__init__()
@@ -38,6 +41,9 @@ class ProcessList(MutableSequence):
             self._list = list()
         else:
             self._list = list(data)
+
+        self._total_waiting_time = 0
+        self._total_queued_process = 0
         
     def __repr__(self):
         ret = ["<{2}> {0} {1}".format(type(x), x, self.__class__.__name__) for x in self._list]
@@ -56,3 +62,9 @@ class ProcessList(MutableSequence):
         self.append(val)
     def append(self, val):
         self._list.append(val)
+    def waiting_time(self):
+        return "Avg waiting time: {}\nTotal waiting time: {}\nQueued Process: {}".format(
+            self._total_waiting_time / self._total_queued_process,
+            self._total_waiting_time,
+            self._total_queued_process
+        )

@@ -1,5 +1,5 @@
+from asg4 import rr, srtf, Process
 from process_list import Process
-from asg4 import rr, srtf
 
 test_data1 = [
     Process(0, 0, 9),
@@ -64,8 +64,8 @@ test_data7 = [
     Process(2, 2, 2),
     Process(3, 5, 2),
     Process(3, 30, 5),
-    # Process(4, 30, 2),#
-    # Process(5, 30, 3),#
+    Process(4, 30, 2),#
+    Process(5, 30, 3),#
     Process(1, 31, 2),
     Process(2, 32, 6),
     Process(0, 38, 8),
@@ -73,12 +73,21 @@ test_data7 = [
     Process(0, 62, 2),
     Process(1, 65, 3),
     Process(3, 66, 8),
-    # Process(4, 66, 2),#
-    # Process(5, 66, 3),#
+    Process(4, 66, 2),#
+    Process(5, 66, 3),#
     Process(1, 90, 10),
     Process(0, 95, 10),
     Process(2, 98, 9),
     Process(3, 99, 8),
+]
+
+# process arrive_time with huge gap
+test_data8 = [
+    Process(1, 0, 2),
+    Process(2, 0, 3),
+    Process(3, 0, 3),
+    Process(4, 20, 5),
+    Process(5, 21, 3)
 ]
 
 
