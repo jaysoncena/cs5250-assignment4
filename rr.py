@@ -80,22 +80,34 @@ class RRList(process_list.ProcessList):
                 self._total_waiting_time += p.total_waiting_time
                 self._total_queued_process += 1
 
-    def waiting_time(self):
-        return "Avg waiting time: {}\nTotal waiting time: {}\nQueued Process: {}".format(
-            self._total_waiting_time / self._total_queued_process,
-            self._total_waiting_time,
-            self._total_queued_process
-        )
-
 
 # this main() is for testing only
 def main():
-    rr = RRList(data=test_data8, quantum=4)
+    rr = RRList(data=test_data7, quantum=4)
 
     for item in rr.iter():
         print(item)
 
     print(rr.waiting_time())
+
+def runner(raw_processes, quantum):
+    processes = []
+    for p in raw_processes:
+        processes.append(process_list.Process(*p))
+
+    lines = []
+    rr = RRList(data=processes)
+    last_p_id = None
+    for p in rr.iter():
+        if last_p_id == p[2].address():
+            continue
+        lines.append("({}, {})".format(p[0], p[1]))
+        last_p_id = p[2].address()
+    
+    lines.append(rr.waiting_time())
+
+    return lines
+
     
 
 

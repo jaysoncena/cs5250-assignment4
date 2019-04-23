@@ -117,21 +117,6 @@ class SJFList(process_list.ProcessList):
 
 # this main() is for testing only
 def main():
-    # for i in range(1,100):
-    #     alpha = i / float(100)
-    #     sjf = SJFList(data=test_data7, alpha=alpha)
-        
-    #     total_waiting_time = 0
-    #     schedule_count = 0
-    #     for p in sjf.iter():
-    #         print((p[0], p[1]))
-
-    #         schedule_count += 1
-    #         total_waiting_time += (p[0] - p[3].arrive_time)
-    #         # print(p)
-    #     print("Average waiting time for alpha={}: {}".format(alpha, total_waiting_time / schedule_count))
-
-        # for i in range(1,100):
     alpha = 0.5
     sjf = SJFList(data=test_data7, alpha=alpha)
     
@@ -145,6 +130,24 @@ def main():
         # print(p)
     print("Average waiting time for alpha={}: {}".format(alpha, total_waiting_time / schedule_count))
     print(sjf.waiting_time())
+
+def runner(raw_processes, alpha, initial_guess):
+    processes = []
+    for p in raw_processes:
+        processes.append(process_list.Process(*p))
+
+    lines = []
+    sjf = SJFList(data=processes, alpha=alpha, initial_guess=initial_guess)
+    last_p_id = None
+    for p in sjf.iter():
+        if last_p_id == p[3].address():
+            continue
+        lines.append("({}, {})".format(p[0], p[1]))
+        last_p_id = p[3].address()
+    
+    lines.append(sjf.waiting_time())
+
+    return lines
 
 
 if __name__ == "__main__":

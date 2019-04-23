@@ -3,26 +3,58 @@
 import argparse
 import re
 
+import process_list
+import rr
+import sjf
+import srtf
+
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("scheduler",
-        choices=["rr", "sjf", "srtf"],
-        help="Choose your process scheduler: rr (Round Robin), sjf (Shortest Job First) or srtf (Shortest Remaining Time First)")
+        default="all",
+        choices=["rr", "sjf", "srtf", "all"],
+        help="Choose your process scheduler: all (Run all scheduler), rr (Round Robin), sjf (Shortest Job First) or srtf (Shortest Remaining Time First)")
     parser.add_argument("--quantum",
         type=int,
+        default=4,
         help="Only applicable to Round Robin, will be ignored for other scheduler algorithms")
     parser.add_argument("--alpha",
         type=float,
+        default=0.5,
         help="Only applicable to Shortest Job First, will be ignored for other scheduler algorithms")
     parser.add_argument("--initial_guess",
         type=int,
+        default=5,
         help="Only applicable to Shortest Job First, will be ignored for other scheduler algorithms")
     args = parser.parse_args()
     custom_args(parser, args)
 
-    lines = input_parser("/dev/stdin")
-    print(lines)
+    raw_processes = input_parser("/dev/stdin")
+
+    print("printing input ----")
+    for p in raw_processes:
+        print(process_list.Process(*p))
+
+
+    if args.scheduler == "rr":
+        print("simulating RR ----")
+        writer(rr.runner(raw_processes, args.quantum), "RR.txt")
+    elif args.scheduler == "sjf":
+        print("simulating SJF ----")
+        writer(sjf.runner(raw_processes, args.alpha, args.initial_guess), "SJF.txt")
+    elif args.scheduler == "srtf":
+        print("simulating SRTF ----")
+        writer(srtf.runner(raw_processes), "SRTF.txt")
+    elif args.scheduler == "all":
+        print("simulating RR ----")
+        writer(rr.runner(raw_processes, args.quantum), "RR.txt")
+        print("simulating SJF ----")
+        writer(sjf.runner(raw_processes, args.alpha, args.initial_guess), "SJF.txt")
+        print("simulating SRTF ----")
+        writer(srtf.runner(raw_processes), "SRTF.txt")
+    else:
+        print("!! ERROR: code path should not go here")
 
 
 def custom_args(parser, args):
@@ -59,6 +91,11 @@ def input_parser(f):
             line_count += 1
 
     return ret
+
+def writer(arr, f):
+    with open(f, "w") as fh:
+        for line in arr:
+            fh.write("{}\n".format(line))
 
 
 if __name__ == "__main__":

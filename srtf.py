@@ -66,7 +66,7 @@ class SRTFList(process_list.ProcessList):
         filtered_list = [x for x in self._list if x.last_process_time() <= current_time]
         if not filtered_list:
             self._sorted_by_process_time()
-            # pop
+            # popq
             p = self._list[0]
             if pop:
                 del self._list[0]
@@ -167,6 +167,24 @@ def main():
     print(srtf.waiting_time())
 
 
+def runner(raw_processes):
+    processes = []
+    for p in raw_processes:
+        processes.append(process_list.Process(*p))
+
+    lines = []
+    srtf = SRTFList(data=processes)
+    last_p_id = None
+    for p in srtf.iter():
+        if last_p_id == p[2].address():
+            continue
+        lines.append("({}, {})".format(p[0], p[1]))
+        last_p_id = p[2].address()
+    
+    lines.append(srtf.waiting_time())
+
+    return lines
+        
 
 if __name__ == "__main__":
     main()

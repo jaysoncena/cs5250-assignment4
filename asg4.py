@@ -29,7 +29,7 @@ class SRTFList(MutableSequence):
         else:
             self._list = list(data)
         
-        self._sorted()
+        # self._sorted()
     def __repr__(self):
         ret = ["{0} {1}".format(type(x), x) for x in self._list]
         return "\n".join(ret)
