@@ -35,6 +35,7 @@ class SJFList(process_list.ProcessList):
         self._process_history = {}
         for proc in self._list:
             self._process_history[proc.id] = {"actual": -1, "predicted": initial_guess}
+        print("alpha={}, guess={}".format(alpha, initial_guess))
 
     def pop_earliest(self):
         """

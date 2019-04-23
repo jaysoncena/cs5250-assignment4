@@ -96,7 +96,7 @@ def runner(raw_processes, quantum):
         processes.append(process_list.Process(*p))
 
     lines = []
-    rr = RRList(data=processes)
+    rr = RRList(data=processes, quantum=quantum)
     last_p_id = None
     for p in rr.iter():
         if last_p_id == p[2].address():
