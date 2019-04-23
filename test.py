@@ -83,6 +83,7 @@ test_data7 = [
 
 # process arrive_time with huge gap
 test_data8 = [
+    # id, t, b
     Process(1, 0, 2),
     Process(2, 0, 3),
     Process(3, 0, 3),

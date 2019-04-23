@@ -20,9 +20,10 @@ class Process:
             self.last_preempt_time))
 
     def __repr__(self):
-        return ("<{} at {}: id={}, arrive_time={}, burst_time={}, last_preempt_time={}>".format(
+        return ("<{} at {}: total_waiting_time={}, id={}, arrive_time={}, burst_time={}, last_preempt_time={}>".format(
             self.__class__.__name__,
             hex(id(self)),
+            self.total_waiting_time,
             self.id,
             self.arrive_time,
             self.burst_time,
@@ -33,6 +34,9 @@ class Process:
 
     def update_waiting_time(self, current_time):
         self.total_waiting_time += current_time - self.last_process_time()
+
+    def address(self):
+        return id(self)
 
 class ProcessList(MutableSequence):
     def __init__(self, data=None):
