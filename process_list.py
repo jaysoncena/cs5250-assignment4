@@ -67,8 +67,9 @@ class ProcessList(MutableSequence):
     def append(self, val):
         self._list.append(val)
     def waiting_time(self):
-        return "Avg waiting time: {}\nTotal waiting time: {}\nQueued Process: {}".format(
-            self._total_waiting_time / self._total_queued_process,
-            self._total_waiting_time,
-            self._total_queued_process
-        )
+        # return "Avg waiting time: {}\nTotal waiting time: {}\nQueued Process: {}".format(
+        #     self._total_waiting_time / self._total_queued_process,
+        #     self._total_waiting_time,
+        #     self._total_queued_process
+        # )
+        return "Average waiting time {}".format(self._total_waiting_time / self._total_queued_process)
