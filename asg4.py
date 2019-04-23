@@ -11,8 +11,8 @@ class Process:
         self.total_waiting_time = 0
     #for printing purpose
     def __repr__(self):
-        # return ('[id %d : arrival_time %d,  burst_time %d]'%(self.id, self.arrive_time, self.burst_time))
-        return ("id={}, arrival_time={}, burst_time={}, last_preempt_time={}".format(
+        # return ('[id %d : arrive_time %d,  burst_time %d]'%(self.id, self.arrive_time, self.burst_time))
+        return ("id={}, arrive_time={}, burst_time={}, last_preempt_time={}".format(
             self.id,
             self.arrive_time,
             self.burst_time,
@@ -29,7 +29,7 @@ class SRTFList(MutableSequence):
         else:
             self._list = list(data)
         
-        self._sorted()
+        # self._sorted()
     def __repr__(self):
         ret = ["{0} {1}".format(type(x), x) for x in self._list]
         return "\n".join(ret)
