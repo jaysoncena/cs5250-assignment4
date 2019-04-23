@@ -20,4 +20,4 @@
 (105, 3)
 (113, 2)
 (122, 0)
-Average waiting time 5.8125
+Average waiting time 5.81

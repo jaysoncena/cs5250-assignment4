@@ -72,4 +72,4 @@ class ProcessList(MutableSequence):
         #     self._total_waiting_time,
         #     self._total_queued_process
         # )
-        return "Average waiting time {}".format(self._total_waiting_time / self._total_queued_process)
+        return "Average waiting time {:.2f}".format(self._total_waiting_time / self._total_queued_process)

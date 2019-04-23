@@ -4,17 +4,18 @@ import argparse
 import re
 
 import process_list
+import fcfs
 import rr
 import sjf
 import srtf
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("scheduler",
         default="all",
-        choices=["rr", "sjf", "srtf", "all"],
-        help="Choose your process scheduler: all (Run all scheduler), rr (Round Robin), sjf (Shortest Job First) or srtf (Shortest Remaining Time First)")
+        choices=["fcfs","rr", "sjf", "srtf", "all"],
+        help="Choose your process scheduler:\nall (Run all scheduler)\nfcfs (First-Come-First-Serve)\nrr (Round Robin)\nsjf (Shortest Job First)\nsrtf (Shortest Remaining Time First)")
     parser.add_argument("--quantum",
         type=int,
         default=4,
@@ -37,7 +38,10 @@ def main():
         print(process_list.Process(*p))
 
 
-    if args.scheduler == "rr":
+    if args.scheduler == "fcfs":
+        print("simulating FCFS ----")
+        writer(fcfs.runner(raw_processes), "FCFS.txt")
+    elif args.scheduler == "rr":
         print("simulating RR ----")
         writer(rr.runner(raw_processes, args.quantum), "RR.txt")
     elif args.scheduler == "sjf":
@@ -47,6 +51,8 @@ def main():
         print("simulating SRTF ----")
         writer(srtf.runner(raw_processes), "SRTF.txt")
     elif args.scheduler == "all":
+        print("simulating FCFS ----")
+        writer(fcfs.runner(raw_processes), "FCFS.txt")
         print("simulating RR ----")
         writer(rr.runner(raw_processes, args.quantum), "RR.txt")
         print("simulating SJF ----")

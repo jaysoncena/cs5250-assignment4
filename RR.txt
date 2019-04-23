@@ -28,4 +28,4 @@
 (142, 1)
 (144, 0)
 (146, 2)
-Average waiting time 44.5625
+Average waiting time 44.56
