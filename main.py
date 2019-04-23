@@ -1,43 +1,65 @@
-import sys
-import
+#!/usr/bin/env python3
 
-from collections import deque
+import argparse
+import re
 
-class Process:
-    last_scheduled_time = 0
-    def __init__(self, id, arrive_time, burst_time):
-        self.id = id
-        self.arrive_time = arrive_time
-        self.burst_time = burst_time
-    #for printing purpose
-    def __repr__(self):
-        return ('[id %d : arrive_time %d,  burst_time %d]'%(self.id, self.arrive_time, self.burst_time))
 
-def rr(process_list, quantum):
-    current_time = 0
-    queue = deque(process_list)
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("scheduler",
+        choices=["rr", "sjf", "srtf"],
+        help="Choose your process scheduler: rr (Round Robin), sjf (Shortest Job First) or srtf (Shortest Remaining Time First)")
+    parser.add_argument("--quantum",
+        type=int,
+        help="Only applicable to Round Robin, will be ignored for other scheduler algorithms")
+    parser.add_argument("--alpha",
+        type=float,
+        help="Only applicable to Shortest Job First, will be ignored for other scheduler algorithms")
+    parser.add_argument("--initial_guess",
+        type=int,
+        help="Only applicable to Shortest Job First, will be ignored for other scheduler algorithms")
+    args = parser.parse_args()
+    custom_args(parser, args)
 
-    while queue:
-        item = queue.popleft()
+    lines = input_parser("/dev/stdin")
+    print(lines)
 
-        if current_time < item[0]:
-            current_time = item[0]
 
-        # for every processing of item, it
-        # deducts quantum from burst time
-        item[2] -= quantum
+def custom_args(parser, args):
+    if args.scheduler == "rr" and not args.quantum:
+        parser.error("Round-robin scheduler requires QUANTUM argument")
+    if args.scheduler == "sjf":
+        if not (args.alpha and args.initial_guess):
+            parser.error("Shortest Job First requires ALPHA and INITIAL_GUESS arguments")
+        elif not (args.alpha > 0 and args.alpha < 1):
+            parser.error("ALPHA argument should be between 0 and 1")
 
-        # we have over-deducted so we need to fix it back
-        # e.g. burst=1 and quantum=2
-        if item[0] < 0:
-            current_time += item[2]
-            item[2] = 0
 
-        yield [current_time, item[1], item[2]]
-        current_time += quantum
+def input_parser(f):
+    ret = []
+    parse_line = re.compile(r"^(\d+) +(\d+) +(\d+)$")
 
-        if item[2] > 0:
-            queue.append(item)
+    with open(f) as fh:
+        line = fh.readline().strip()
+        
+        parsed = parse_line.match(line)
+        if parsed:
+            ret.append([int(x) for x in parsed.groups()])
+
+        line_count = 1
+        while line:
+            if line is None:
+                continue
+            line = fh.readline().strip()
+            
+            parsed = parse_line.match(line)
+            if parsed:
+                ret.append([int(x) for x in parsed.groups()])
+
+            line_count += 1
+
+    return ret
+
 
 if __name__ == "__main__":
     main()
